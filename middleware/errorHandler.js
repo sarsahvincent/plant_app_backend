@@ -1,4 +1,3 @@
-
 /* Not Found */
 export const notFound = (req, res, next) => {
   const error = new Error(`Not Found: ${req.original}`);
@@ -15,3 +14,11 @@ export const errorHandler = (err, req, res, next) => {
     stack: err.stack,
   });
 };
+
+/* import { Request, Response, NextFunction } from "express";
+
+export const errorHandler = (err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Internal server error" });
+};
+ */

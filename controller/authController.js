@@ -53,22 +53,6 @@ export const login = async (req, res) => {
       if (!passwordMatch) {
         res.status(401).json({ error: "Invalid credentials" });
       } else {
-
-        // const refreshToken = await generateRefreshToken("64aae766ae8a91921e57c9ef");
-
-        // const updatedUser = await User.findOneAndUpdate(
-        //   user._id,
-        //   {
-        //     refreshToken: refreshToken,
-        //   },
-        //   { new: true }
-        // );
-
-        // res.cookie("refreshToken", refreshToken, {
-        //   httpOnly: true,
-        //   maxAge: 72 * 60 * 60 * 100,
-        // });
-        // console.log(refreshToken);
         const token = jwt.sign(
           {
             userName: user.userName,

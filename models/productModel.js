@@ -1,13 +1,22 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
-const Schema = mongoose.Schema;
+/* export interface ProductModel extends Document {
+  name: string;
+  description: string;
+  price: number;
+  categoryId: string;
+  comments: Types.ObjectId[];
+ */
 
-const productSchema = new mongoose.Schema(
+const productSchema = new Schema(
   {
-    title: {
-      type: String,
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
       required: true,
-      trim: true,
     },
     slug: {
       type: String,
@@ -15,58 +24,15 @@ const productSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    description: {
-      type: String,
-      required: true,
-    },
-
-    category: {
-      type: String,
-      require: true,
-    },
-    // category: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "Category",
-    // },
-    brand: {
-      type: String,
-      require: true,
-    },
-    // brand: {
-    //   type: String,
-    //   enum: ["Apple", "Samsung", "Lenovo"],
-    // },
-    price: {
-      type: Number,
-      required: true,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-    },
-    sold: {
-      type: Number,
-      default: 0,
-      select: true, // this is used to fide fields
-    },
     images: {
       type: Array,
     },
-    color: {
-      type: String,
-      require: true,
-      enum: ["Black", "Brown", "Red"]
-    },
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-
-    // color: {
-    //   type: String,
-    //   enum: ["Black", "Brown", "Red"],
-    // },
     ratings: [
       {
         star: Number,
-        postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        postedBy: { type: Schema.Types.ObjectId, ref: "User" },
       },
     ],
   },
@@ -75,5 +41,5 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-const Products = mongoose.model("products", productSchema);
+const Products = mongoose.model("Products", productSchema);
 export default Products;

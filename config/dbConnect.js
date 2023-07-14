@@ -8,7 +8,7 @@ const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.MONGO_PASSWORD
 /* MONGOOSE SETUP */
 const dbConnect = () => {
   try {
-    mongoose.connect(uri, {
+    mongoose.connect(`mongodb://localhost:27017/ecommerce_backend`, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

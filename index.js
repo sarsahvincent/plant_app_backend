@@ -6,6 +6,8 @@ import bodyParser from "body-parser";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoute.js";
 import productRoutes from "./routes/productRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js"
+// import { errorHandler } from "./middleware/errorHandler.js";
 
 dbConnect();
 
@@ -22,6 +24,13 @@ const PORT = process.env.PORT || 3001;
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/comment", commentRoutes);
+// app.use('/api/category', categoryRoutes);
+// app.use('/api/address', addressRoutes);
+// app.use('/api/order', orderRoutes);
+// app.use('/api/support', supportRoutes);
+// app.use('/api/payment', paymentRoutes);
+// app.use('/api/notification', notificationRoutes);
 
 app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
