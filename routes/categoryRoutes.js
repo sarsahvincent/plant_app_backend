@@ -5,7 +5,7 @@ import {
   deleteProduct,
   updateProduct,
   getProductById,
-} from "../controller/productController.js";
+} from "../controller/product.controller.js";
 import { verifyToken, isAdmin } from "../middleware/authMiddleware.js";
 
 const productRoutes = express.Router();

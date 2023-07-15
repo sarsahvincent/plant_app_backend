@@ -4,8 +4,9 @@ import dotenv from "dotenv";
 dotenv.config();
 const secretKey = process.env.JWT_SECRET; // Replace with your own secret key
 const accessToken = jwt.sign({ userId: "123" }, secretKey, {
-  expiresIn: "15m",
+  expiresIn: "1m",
 });
+
 
 /* const refreshToken = jwt.sign({ userId: "123" }, secretKey, {
   expiresIn: "7d",

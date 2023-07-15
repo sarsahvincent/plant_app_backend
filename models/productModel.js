@@ -24,9 +24,10 @@ const productSchema = new Schema(
       unique: true,
       lowercase: true,
     },
-    images: {
+    image: { type: String },
+    /*     images: {
       type: Array,
-    },
+    }, */
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     ratings: [
