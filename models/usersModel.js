@@ -12,10 +12,13 @@ const userSchema = new mongoose.Schema(
     firstName: {
       type: String,
       required: true,
-      unique: true,
+
       index: true,
     },
     lastName: {
+      type: String,
+    },
+    image: {
       type: String,
     },
     email: {
@@ -23,6 +26,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    address: { type: mongoose.Schema.ObjectId, ref: "Address" },
     mobile: {
       type: String,
       required: true,
@@ -44,7 +48,6 @@ const userSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    address: [{ type: mongoose.Schema.ObjectId, ref: "Address" }],
     wishlist: [{ type: mongoose.Schema.ObjectId, ref: "Product" }],
     refreshToken: {
       type: String,

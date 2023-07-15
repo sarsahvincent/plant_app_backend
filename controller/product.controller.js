@@ -3,6 +3,7 @@ import Product from "../models/productModel.js";
 
 import multer from "multer";
 import aws from "aws-sdk";
+import User from "../models/usersModel.js";
 
 // Configure AWS SDK with your AWS credentials
 const s3 = new aws.S3({
@@ -30,8 +31,14 @@ export const getAllProducts = async (req, res) => {
       })
       .populate({
         path: "comments",
-        select: "text userId",
+        select: "text",
+        populate: {
+          path: "user",
+          select: "email userName image",
+          model: User,
+        },
       });
+
     res.json(products);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -59,15 +66,15 @@ export const getProductById = async (req, res) => {
 // Create a product
 export const createProduct = async (req, res) => {
   try {
+
     upload.single("image")(req, res, async (err) => {
       if (req.body.name) {
         req.body.slug = slugify(req.body.name);
       }
-
-      // console.log("imagesss",req);
       if (err) {
         return res.status(400).json({ error: "Error uploading file" });
       }
+
       // Check if an image file was uploaded
       let imageLocation;
       if (req.file) {
@@ -96,142 +103,16 @@ export const createProduct = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-////////////////
 
-console.log("this.createProduct");
-// Create a product
-export const createProducpp = upload.single("image"); // 'image' is the name of the image field in the form
-async (req, res) => {
-  try {
-    if (req.body.name) {
-      req.body.slug = slugify(req.body.name);
-    }
-
-    // Check if an image file was uploaded
-    let imageKey;
-    if (req.file) {
-      const fileContent = req.file.buffer;
-      const params = {
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: req.file.originalname,
-        Body: fileContent,
-        ACL: "public-read",
-      };
-
-      // Upload the image file to S3 bucket
-      const result = await s3.upload(params).promise();
-      imageKey = result.Key;
-    }
-
-    const newProduct = await Product.create({
-      ...req.body,
-      user: req.user,
-      image: imageKey,
-    });
-
-    res.status(201).json(newProduct);
-  } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-export const createProducttt = async (req, res) => {
-  try {
-    if (req.body.name) {
-      req.body.slug = slugify(req.body.name);
-    }
-
-    // Check if an image file was uploaded
-    let imageKey;
-    if (req.image) {
-      const fileContent = req.file.buffer;
-      const params = {
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: req.file.originalname,
-        Body: fileContent,
-        ACL: "public-read",
-      };
-
-      // Upload the image file to S3 bucket
-      const result = await s3.upload(params).promise();
-      imageKey = result.Key;
-    }
-
-    const newProduct = await Product.create({
-      /*    images: {
-        data: fs.readFileSync(
-          path.join(__dirname + "/uploads/" + req.file.filename)
-        ),
-        contentType: "image/png",
-      }, */
-
-      ...req.body,
-      user: req.user,
-      image: imageKey,
-    });
-
-    res.json(newProduct);
-  } catch (err) {
-    res.status(500).json({ error: err });
-
-    throw new Error(err);
-  }
-};
-///////////
-
-// Create a product
-export const createProductii = async (req, res) => {
-  try {
-    if (req.body.name) {
-      req.body.slug = slugify(req.body.name);
-    }
-
-    // Check if an image file was uploaded
-    let imageKey;
-    if (req.image) {
-      const fileContent = req.file.buffer;
-      const params = {
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: req.file.originalname,
-        Body: fileContent,
-        ACL: "public-read",
-      };
-
-      // Upload the image file to S3 bucket
-      const result = await s3.upload(params).promise();
-      imageKey = result.Key;
-    }
-
-    const newProduct = await Product.create({
-      /*    images: {
-        data: fs.readFileSync(
-          path.join(__dirname + "/uploads/" + req.file.filename)
-        ),
-        contentType: "image/png",
-      }, */
-
-      ...req.body,
-      user: req.user,
-      image: imageKey,
-    });
-
-    res.json(newProduct);
-  } catch (err) {
-    res.status(500).json({ error: err });
-
-    throw new Error(err);
-  }
-};
 
 // Update a product
 export const updateProduct = async (req, res) => {
   try {
     const productId = req.params.id;
-    const { name, description, price, categoryId } = req.body;
 
     const product = await Product.findByIdAndUpdate(
       productId,
-      { name, description, price, categoryId },
+      { ...req.body },
       { new: true }
     );
 

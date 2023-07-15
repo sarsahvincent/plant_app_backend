@@ -1,12 +1,4 @@
-import mongoose, { Schema, model } from "mongoose";
-
-/* export interface ProductModel extends Document {
-  name: string;
-  description: string;
-  price: number;
-  categoryId: string;
-  comments: Types.ObjectId[];
- */
+import mongoose, { Schema } from "mongoose";
 
 const productSchema = new Schema(
   {
@@ -21,7 +13,6 @@ const productSchema = new Schema(
     slug: {
       type: String,
       // required: true,
-      unique: true,
       lowercase: true,
     },
     image: { type: String },
@@ -42,5 +33,5 @@ const productSchema = new Schema(
   }
 );
 
-const Products = mongoose.model("Products", productSchema);
+const Products = mongoose.model("products", productSchema);
 export default Products;

@@ -4,7 +4,7 @@ import {
   createOrder,
   updateOrder,
   deleteOrder,
-} from '../controllers/order.controller';
+} from '../controller/orderController.js';
 import { authenticateToken } from '../utils/auth';
 
 const router = express.Router();

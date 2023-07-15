@@ -4,7 +4,7 @@ import {
   createSupportRequest,
   updateSupportRequest,
   deleteSupportRequest,
-} from '../controllers/support.controller';
+} from '../controller/supportController.js';
 import { authenticateToken } from '../utils/auth';
 
 const router = express.Router();

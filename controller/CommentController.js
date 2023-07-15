@@ -15,11 +15,15 @@ export const getAllComments = async (req, res) => {
 // Create a comment
 export const createComment = async (req, res) => {
   try {
-    const { userId, productId, text } = req.body;
-    const comment = await Comment.create({ userId, productId, text });
+    const { productId, text } = req.body;
+
+    const user = req.user._id;
+
+    console.log("user", user)
+    const comment = await Comment.create({ user, productId, text });
 
     // Update the product's comments array
-    const product = await Products.findByIdAndUpdate(
+    await Products.findByIdAndUpdate(
       productId,
       { $push: { comments: comment._id } },
       { new: true }
@@ -35,11 +39,11 @@ export const createComment = async (req, res) => {
 export const updateComment = async (req, res) => {
   try {
     const commentId = req.params.id;
-    const { userId, productId, text } = req.body;
+    const { user, productId, text } = req.body;
 
     const comment = await Comment.findByIdAndUpdate(
       commentId,
-      { userId, productId, text },
+      { user, productId, text },
       { new: true }
     );
 

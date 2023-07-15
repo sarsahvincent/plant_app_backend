@@ -1,13 +1,32 @@
-// Import necessary modules
 import User from "../models/usersModel.js";
 import { validateMongoDbId } from "../utils/validateMongodb.js";
+
+import multer from "multer";
+import aws from "aws-sdk";
+
+// Configure AWS SDK with your AWS credentials
+const s3 = new aws.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+});
+
+// Configure multer to handle file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 1024 * 1024 * 5, // Maximum file size: 5MB
+  },
+});
 
 // Controller for handling user-related operations
 const userController = {
   // Get all users
   getAllUsers: async (req, res) => {
     try {
-      const users = await User.find();
+      const users = await User.find().populate({
+        path: "address",
+        select: "city ",
+      });
       res.json(users);
     } catch (error) {
       res.status(500).json({ error: "Internal server error" });
@@ -33,6 +52,7 @@ const userController = {
         lastName: user.lastName,
         email: user.email,
         mobile: user.mobile,
+        address: user.address,
       };
 
       res.json(foundUser);
@@ -43,47 +63,56 @@ const userController = {
 
   // Update an existing user
   updateUser: async (req, res) => {
-    console.log(req.user?._id.valueOf());
-    console.log(req.body);
-
-
     try {
-      const userId = req.user?._id.valueOf();
+      upload.single("image")(req, res, async (err) => {
+        const userId = req.user?._id.valueOf();
 
-      validateMongoDbId(userId);
-      const { userName, firstName, lastName, } = req.body;
+        if (req.body.name) {
+          req.body.slug = slugify(req.body.name);
+        }
+        if (err) {
+          return res.status(400).json({ error: "Error uploading file" });
+        }
 
-      // Find the user by ID
-      // const updatedUser = await User.findByIdAndUpdate(
-      //   userId,
-      //   {
-      //     userName,
-      //     firstName,
-      //     lastName,
-      //     email,
-      //     mobile,
-      //   },
-      //   {
-      //     new: true,
-      //   }
-      // );
+        // Check if an image file was uploaded
+        let imageLocation;
+        if (req.file) {
+          const fileContent = req.file.buffer;
+          const params = {
+            Bucket: process.env.AWS_S3_BUCKET_NAME,
+            Key: req.file.originalname,
+            Body: fileContent,
+            ACL: "public-read",
+          };
 
-      const user = await User.findOne({ _id: userId });
+          // Upload the image file to S3 bucket
+          const result = await s3.upload(params).promise();
 
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
+          imageLocation = result.Location;
+        }
 
-      // Update user properties
-      user.userName = userName || user.userName;
-      // user.email = email || user.email;
-      user.firstName = firstName || user.firstName;
-      user.lastName = lastName || user.lastName;
+        validateMongoDbId(userId);
+        const { userName, firstName, lastName } = req.body;
 
-      // Save the updated user
-      const updatedUser = await user.save();
+        const user = await User.findOne({ _id: userId });
 
-      res.json(updatedUser);
+        if (!user) {
+          return res.status(404).json({ error: "User not found" });
+        }
+
+
+        console.log("imageLocation", imageLocation)
+        // Update user properties
+        user.image = imageLocation;
+        user.userName = userName || user.userName;
+        user.firstName = firstName || user.firstName;
+        user.lastName = lastName || user.lastName;
+
+        // Save the updated user
+        const updatedUser = await user.save();
+
+        res.json(updatedUser);
+      });
     } catch (error) {
       res.status(500).json({ error: "Internal server error" });
     }

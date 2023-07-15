@@ -54,7 +54,7 @@ export const isAdmin = expressAsyncHandler(async (req, res, next) => {
       req.user = user;
       next();
     } else {
-      return res.status(403).send("You are note allowed to access page");
+      return res.status(403).send("Access Denied");
     }
   } catch (err) {
     res.status(500).json({ message: err.message });

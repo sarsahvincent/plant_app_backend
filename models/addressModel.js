@@ -1,6 +1,6 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema } from "mongoose"; // Erase if already required
 
-const addressSchema = new Schema(
+const addressSchema = new mongoose.Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     street: { type: String, required: true },
@@ -11,4 +11,6 @@ const addressSchema = new Schema(
   { timestamps: true }
 );
 
-export default model < AddressModel > ("Address", addressSchema);
+const address = mongoose.model("Address", addressSchema);
+
+export default address;

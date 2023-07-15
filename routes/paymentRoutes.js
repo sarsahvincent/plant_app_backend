@@ -4,7 +4,7 @@ import {
   createPayment,
   updatePayment,
   deletePayment,
-} from '../controllers/payment.controller';
+} from '../controller/paymentController.js';
 import { authenticateToken } from '../utils/auth';
 
 const router = express.Router();

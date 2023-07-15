@@ -4,7 +4,7 @@ import {
   createNotification,
   updateNotification,
   deleteNotification,
-} from '../controllers/notification.controller';
+} from '../controller/NotificationController.js';
 import { authenticateToken } from '../utils/auth';
 
 const router = express.Router();

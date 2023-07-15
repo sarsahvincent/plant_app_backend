@@ -1,4 +1,4 @@
-import Support from '../models/support.model';
+import Support from '../models/supportModel.js';
 
 // Get all support requests
 export const getAllSupportRequests = async (req, res) => {
